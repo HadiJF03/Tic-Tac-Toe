@@ -1,0 +1,102 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'Shadows Into Light', cursive;
+}
+html, body{
+    height: 100%;
+    width: 100%;
+}
+body{
+    display: grid;
+    grid-template-columns: 1fr ;
+    grid-template-rows: 1fr minmax(auto,8fr) 1fr;
+}
+.header, .footer{
+    background-color: black;
+    color: white;
+
+    text-align: center;
+    padding: 20px;
+}
+.header{
+    font-size: 3em;
+    grid-row: 1/2;
+    
+}
+.footer{
+    grid-row:3/4;
+}
+.container{
+    grid-row:2/3;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.menu{
+    font-size: xx-large;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255);
+    justify-content: space-around;
+    align-items: center;
+    border-style:groove;
+    position: absolute;
+    height: 500px;
+    width: 500px;
+    flex: 0 1 auto;
+}
+
+.players-input{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+}
+.player{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+.submit{
+    width: 50%;
+    padding: 10px;
+    font-size: 2rem;
+}
+.player>input{
+    padding: 10px;
+    font-size: 1.2rem;
+}
+.gameboard{
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    height: 450px;
+    width: 450px;
+
+    flex: 0 1 auto;
+
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+    
+    gap: 5px;
+}
+.cell{
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: 5em;
+}
+.reset{
+    border: none;
+    background-color: black;
+    color: white;
+    width: 100px;
+    padding: 10px;
+    font-size: 1.5rem;
+}
+.hidden{
+    display: none;
+}
