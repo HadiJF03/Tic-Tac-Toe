@@ -62,6 +62,7 @@ function screenController(){
         menuContainer.classList.remove('hidden');
         footer.textContent = "";
         screenController();
+
         
     }
     reset.addEventListener('click',resetGame);
@@ -98,14 +99,15 @@ function screenController(){
     const updateScreen = ()=>{
         for(let i = 0; i<3;i++){
             for(let j = 0 ; j<3;j++){
-                board[i][j].getDiv().addEventListener('click', ()=>{
+                board[i][j].getDiv().addEventListener('click', (e)=>{
                     if(!playable) return;
+                    if(e.target.textContent != " ") return;
                     let activeSymbol = game.getSymbol();
                     board[i][j].setValue(activeSymbol);
-                    winHandeler();
-
+        
                     if(playerArr[1].isAi==true) AIMove();
                     else game.switchActive();
+                    winHandeler();
                     });
                 boardDiv.appendChild(board[i][j].getDiv());
             }
@@ -128,6 +130,7 @@ function gameController(playerOneName= "player 1", playerTwoName = "player 2"){
         isMin: true,
     }];
     const aiToggle = document.querySelector(".AI-toggle");
+    aiToggle.textContent = "Player vs Player";
     aiToggle.addEventListener('click',(e)=>{
         player[1].isAi=true;
         e.target.textContent = e.target.textContent == "Player vs Ai" ? "Player vs Player":"Player vs Ai";
