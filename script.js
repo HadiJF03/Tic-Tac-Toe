@@ -54,18 +54,47 @@ function screenController(){
     const player1 = document.querySelector("#p-one");
     const player2 = document.querySelector("#p-two");
     const footer = document.querySelector('.footer');
-    let playerArr = game.getPlayers()
+    const diffContainer = document.querySelector(".difficulty");
+    const diffButton = document.querySelector(".AI-diff");
+    let playerArr = game.getPlayers();
+    const aiToggle = document.querySelector(".AI-toggle");
+
+    const toggleAI = (e)=>{
+        if(playerArr[1].isAi==false) playerArr[1].isAi=true;
+        else playerArr[1].isAi=false;
+        e.target.textContent = e.target.textContent == "Player vs Ai" ? "Player vs Player":"Player vs Ai";
+        if(e.target.textContent=="Player vs Player") diffContainer.setAttribute('id',"hidden");
+        else diffContainer.removeAttribute("id")
+    }
+    
+
+    const changeDiff = (e)=>{
+        if(e.target.innerHTML=="Easy") e.target.innerHTML = "Medium";
+        else if(e.target.innerHTML =="Medium") e.target.innerHTML = "Impossible";
+        else if(e.target.innerHTML == "Impossible") e.target.innerHTML = "Easy";
+    }
+    
+    const getDifficulty= ()=>{
+        let diff = diffButton.innerHTML;
+        if(diff == "Easy") return 0.25;
+        if(diff == "Medium") return 0.50;
+        return 1;
+    }
     const resetGame = ()=>{
         boardDiv.innerHTML = "";
         boardDiv.classList.add("hidden");
         reset.classList.add("hidden");
         menuContainer.classList.remove('hidden');
         footer.textContent = "";
+        aiToggle.removeEventListener('click',toggleAI);
+        diffButton.removeEventListener('click',changeDiff)
+        start.removeEventListener('click',menuControl);
+        reset.removeEventListener('click',resetGame);
+        aiToggle.textContent = "Player vs Player";
+        diffContainer.setAttribute('id',"hidden");
         screenController();
-
-        
     }
-    reset.addEventListener('click',resetGame);
+    
 
     const menuControl = ()=>{
         menuContainer.classList.add("hidden");
@@ -74,7 +103,7 @@ function screenController(){
         game = gameController(player1.value,player2.value);
         
     }
-    start.addEventListener('click',menuControl);
+    
 
     const winHandeler = ()=>{
         
@@ -92,11 +121,33 @@ function screenController(){
 
         }
     }
+    const getAvailableInputs = ()=>{
+        let inputs = [];
+        for(let i =0; i<3;i++){
+            for(let j =0;j<3;j++){
+                if(board[i][j].getValue()==" ") inputs.push({row:i, col:j})
+            }
+            
+        }
+        return inputs;
+    }
     const AIMove = ()=>{
+        if(!playable) return;
+        let p = getDifficulty();
         let move = bestMove(board);
-        board[move.row][move.col].setValue("O");
+        let inputs = getAvailableInputs();
+        if(Math.random()<p) board[move.row][move.col].setValue("O");
+        else{
+            move = inputs[Math.floor(Math.random()*(inputs.length))];
+            console.log(move.col);
+            board[move.row][move.col].setValue("O");
+        }
     }
     const updateScreen = ()=>{
+        aiToggle.addEventListener('click',toggleAI);
+        diffButton.addEventListener('click',changeDiff)
+        start.addEventListener('click',menuControl);
+        reset.addEventListener('click',resetGame);
         for(let i = 0; i<3;i++){
             for(let j = 0 ; j<3;j++){
                 board[i][j].getDiv().addEventListener('click', (e)=>{
@@ -104,7 +155,7 @@ function screenController(){
                     if(e.target.textContent != " ") return;
                     let activeSymbol = game.getSymbol();
                     board[i][j].setValue(activeSymbol);
-        
+                    winHandeler();
                     if(playerArr[1].isAi==true) AIMove();
                     else game.switchActive();
                     winHandeler();
@@ -129,12 +180,7 @@ function gameController(playerOneName= "player 1", playerTwoName = "player 2"){
         isAi: false,
         isMin: true,
     }];
-    const aiToggle = document.querySelector(".AI-toggle");
-    aiToggle.textContent = "Player vs Player";
-    aiToggle.addEventListener('click',(e)=>{
-        player[1].isAi=true;
-        e.target.textContent = e.target.textContent == "Player vs Ai" ? "Player vs Player":"Player vs Ai";
-    });
+    
 
     let activePlayer = player[0];
     const getPlayers = ()=> player;
@@ -230,7 +276,7 @@ function bestMove(board){
             if(board[i][j].getValue()==" "){
                 board[i][j].setValue("X");
                 let score = minMax(board,false,0);
-                console.log(score);
+                
                 board[i][j].clearValue();
 
                 if(score>move.bestScore){
